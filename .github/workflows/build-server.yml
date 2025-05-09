@@ -1,0 +1,28 @@
+name: Build Server
+
+on:
+  push:
+    paths:
+      - 'server/**'
+      - 'common/**'
+      - '.github/workflows/build-server.yml'
+  pull_request:
+    paths:
+      - 'server/**'
+      - 'common/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++
+
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Server
+        run: cmake --build build --target server
