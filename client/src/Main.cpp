@@ -1,6 +1,8 @@
-#include <iostream>
+#include "utils/Logger.h"
+
+using namespace hyperion_proxy::common::utils;
 
 int main() {
-    std::cout << "Hello and welcome to C++ in client!" << std::endl;
+    Logger::log("Hello and welcome to C++ in client!", Logger::LogLevel::INFO);
     return 0;
 }

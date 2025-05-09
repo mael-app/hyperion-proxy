@@ -1,0 +1,8 @@
+mappings:
+  - public_port: 8080
+    destination_host: "192.168.0.10"
+    destination_port: 80
+
+  - public_port: 3000
+    destination_host: "192.168.0.20"
+    destination_port: 3001

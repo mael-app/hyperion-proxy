@@ -94,3 +94,6 @@ dkms.conf
 *.iml
 out
 gen
+
+config.yaml
+cmake-build-debug
