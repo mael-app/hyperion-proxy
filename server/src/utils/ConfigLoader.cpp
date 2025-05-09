@@ -1,12 +1,29 @@
 #include "utils/ConfigLoader.h"
-#include <iostream>
+#include <yaml-cpp/yaml.h>
+#include <filesystem>
+#include "utils/Logger.h"
+
+namespace fs = std::filesystem;
+using namespace hyperion_proxy::common::utils;
 
 bool ConfigLoader::load(const std::string &path) {
+
+    if (!fs::exists(path)) {
+        Logger::log("Configuration file not found: " + path, Logger::LogLevel::ERROR);
+        return false;
+    }
+
+    auto ext = fs::path(path).extension().string();
+    if (ext != ".yaml" && ext != ".yml") {
+        Logger::log("Invalid config file extension. Expected .yaml or .yml", Logger::LogLevel::ERROR);
+        return false;
+    }
+
     try {
         YAML::Node config = YAML::LoadFile(path);
 
         if (!config["mappings"]) {
-            std::cerr << "Missing 'mappings' key in config file.\n";
+            Logger::log("Missing 'mappings' key in config file.", Logger::LogLevel::ERROR);
             return false;
         }
 
@@ -20,9 +37,10 @@ bool ConfigLoader::load(const std::string &path) {
             port_mappings_.emplace_back(mapping);
         }
 
+        Logger::log("Successfully loaded " + std::to_string(port_mappings_.size()) + " port mapping(s).", Logger::LogLevel::INFO);
         return true;
     } catch (const std::exception &e) {
-        std::cerr << "Failed to load YAML config: " << e.what() << '\n';
+        Logger::log("Failed to parse config: " + std::string(e.what()), Logger::LogLevel::ERROR);
         return false;
     }
 }

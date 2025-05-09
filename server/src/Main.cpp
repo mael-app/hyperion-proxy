@@ -1,15 +1,22 @@
-#include <iostream>
 #include "utils/ConfigLoader.h"
+#include "utils/Logger.h"
 
-int main() {
+using namespace hyperion_proxy::common::utils;
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        Logger::log("Usage: " + std::string(argv[0]) + " <config.yaml>", Logger::LogLevel::ERROR);
+        return 1;
+    }
+
     ConfigLoader loader;
-    if (!loader.load("config.yaml")) {
-        std::cerr << "Failed to load configuration.\n";
+    if (!loader.load(argv[1])) {
         return 1;
     }
 
     for (const auto &mapping : loader.getPortMappings()) {
-        std::cout << "Public Port: " << mapping.public_port << ", Destination: " << mapping.destination_host << ":" << mapping.destination_port << '\n';
+        Logger::log("Public Port: " + std::to_string(mapping.public_port) + " → " + mapping.destination_host + ":" + std::to_string(mapping.destination_port),
+                    Logger::LogLevel::INFO);
     }
 
     return 0;
